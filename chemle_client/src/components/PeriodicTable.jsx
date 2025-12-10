@@ -104,12 +104,12 @@ function PeriodicTable({ onElementSelect, disabledElements = [] }) {
               const disabled = isDisabled(element);
               
               return (
-                <div
-                  key={`${row.period}-${index}`}
-                  className={`periodic-cell ${getElementTypeClass(element)} ${element ? '' : 'empty'} ${disabled ? 'disabled' : ''}`}
-                  onClick={() => handleElementClick(element)}
-                  title={element ? `${element.name} (${element.symbol}) - ${element.type}` : ''}
-                >
+              <div
+                key={`${row.period}-${index}`}
+                className={`periodic-cell ${getElementTypeClass(element)} ${element ? '' : 'empty'} ${disabled ? 'disabled selected' : ''}`}
+                onClick={() => handleElementClick(element)}
+                title={element ? `${element.name} (${element.symbol}) - ${element.type}` : ''}
+              >
                   {element && (
                     <>
                       <div className="element-number">{element.atomicNumber}</div>
@@ -134,7 +134,7 @@ function PeriodicTable({ onElementSelect, disabledElements = [] }) {
             return (
               <div
                 key={atomicNum}
-                className={`periodic-cell ${getElementTypeClass(element)} ${disabled ? 'disabled' : ''}`}
+                className={`periodic-cell ${getElementTypeClass(element)} ${disabled ? 'disabled selected' : ''}`}
                 onClick={() => handleElementClick(element)}
                 title={element ? `${element.name} (${element.symbol})` : ''}
               >
@@ -158,7 +158,7 @@ function PeriodicTable({ onElementSelect, disabledElements = [] }) {
             return (
               <div
                 key={atomicNum}
-                className={`periodic-cell ${getElementTypeClass(element)} ${disabled ? 'disabled' : ''}`}
+                className={`periodic-cell ${getElementTypeClass(element)} ${disabled ? 'disabled selected' : ''}`}
                 onClick={() => handleElementClick(element)}
                 title={element ? `${element.name} (${element.symbol})` : ''}
               >

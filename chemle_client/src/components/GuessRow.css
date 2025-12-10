@@ -1,12 +1,25 @@
 .guess-row {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 10px;
-  padding: 15px;
-  background: white;
+  gap: 12px;
+  padding: 18px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
   border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  border-radius: 12px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .guess-row.empty {
@@ -15,16 +28,22 @@
 
 .guess-row.active {
   border-color: #667eea;
-  box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
-  animation: pulse 2s infinite;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.4),
+              0 0 40px rgba(102, 126, 234, 0.2);
+  animation: activePulse 2s ease-in-out infinite;
+  background: linear-gradient(135deg, #ffffff 0%, #e8eaf6 100%);
 }
 
-@keyframes pulse {
+@keyframes activePulse {
   0%, 100% {
-    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.4),
+                0 0 40px rgba(102, 126, 234, 0.2);
+    border-color: #667eea;
   }
   50% {
-    box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+    box-shadow: 0 0 30px rgba(102, 126, 234, 0.6),
+                0 0 60px rgba(102, 126, 234, 0.4);
+    border-color: #764ba2;
   }
 }
 
@@ -39,20 +58,50 @@
 }
 
 .element-cell {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   font-weight: bold;
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.element-cell::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .element-symbol-large {
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: bold;
-  color: #333;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1;
 }
 
 .element-name-small {
   font-size: 0.85rem;
-  color: #666;
+  color: rgba(255, 255, 255, 0.9);
   margin-top: 5px;
+  position: relative;
+  z-index: 1;
 }
 
 .hint-cell {
@@ -60,61 +109,128 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 10px;
-  border-radius: 6px;
-  transition: all 0.3s ease;
+  padding: 12px;
+  border-radius: 10px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hint-cell::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s;
+}
+
+.hint-cell:hover::after {
+  left: 100%;
 }
 
 .hint-label {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: bold;
   text-transform: uppercase;
-  margin-bottom: 5px;
-  color: #666;
+  margin-bottom: 6px;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
 }
 
 .hint-value {
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
+  position: relative;
+  z-index: 1;
 }
 
 .hint-icon {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: bold;
+  position: relative;
+  z-index: 1;
+  animation: iconBounce 0.6s ease-out;
+}
+
+@keyframes iconBounce {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Grup ipuçları */
 .hint-cell.correct {
-  background: #4caf50;
+  background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
   color: white;
+  animation: correctGlow 2s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+}
+
+@keyframes correctGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(76, 175, 80, 0.8);
+  }
 }
 
 .hint-cell.left {
-  background: #ff9800;
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
   color: white;
+  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
 }
 
 .hint-cell.right {
-  background: #2196f3;
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
   color: white;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
 }
 
 /* Periyot ipuçları */
 .hint-cell.up {
-  background: #ff9800;
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
   color: white;
+  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
 }
 
 .hint-cell.down {
-  background: #2196f3;
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
   color: white;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
 }
 
 /* Tür ipuçları */
 .hint-cell.wrong {
-  background: #f44336;
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
   color: white;
+  box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
 }
 
 @media (max-width: 768px) {
