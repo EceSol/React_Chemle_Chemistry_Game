@@ -1,0 +1,210 @@
+.periodic-table-container {
+  width: 100%;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.periodic-table {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 20px;
+}
+
+.periodic-row {
+  display: flex;
+  gap: 2px;
+  justify-content: flex-start;
+}
+
+.periodic-cell {
+  width: 60px;
+  height: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  font-size: 0.7rem;
+  padding: 4px;
+}
+
+.periodic-cell.empty {
+  border: none;
+  cursor: default;
+  background: transparent;
+}
+
+.periodic-cell:not(.empty):not(.disabled):hover {
+  transform: scale(1.1);
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.periodic-cell.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.element-number {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-size: 0.6rem;
+  color: #666;
+  font-weight: bold;
+}
+
+.element-symbol {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+  margin-top: 8px;
+}
+
+.element-name {
+  font-size: 0.5rem;
+  color: #666;
+  text-align: center;
+  margin-top: 2px;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Element türü renkleri */
+.element-type-metal {
+  background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%);
+  color: #333;
+}
+
+.element-type-ametal {
+  background: linear-gradient(135deg, #81c784 0%, #4caf50 100%);
+  color: #fff;
+}
+
+.element-type-yarı-metal {
+  background: linear-gradient(135deg, #90caf9 0%, #42a5f5 100%);
+  color: #fff;
+}
+
+.element-type-soygaz {
+  background: linear-gradient(135deg, #ba68c8 0%, #9c27b0 100%);
+  color: #fff;
+}
+
+.lanthanides-actinides {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #ddd;
+}
+
+.lanthanides-row,
+.actinides-row {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.row-label {
+  font-weight: bold;
+  margin-right: 10px;
+  min-width: 100px;
+  font-size: 0.9rem;
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #ddd;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-color {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: 2px solid #ddd;
+}
+
+.legend-color.element-type-metal {
+  background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%);
+}
+
+.legend-color.element-type-ametal {
+  background: linear-gradient(135deg, #81c784 0%, #4caf50 100%);
+}
+
+.legend-color.element-type-yarı-metal {
+  background: linear-gradient(135deg, #90caf9 0%, #42a5f5 100%);
+}
+
+.legend-color.element-type-soygaz {
+  background: linear-gradient(135deg, #ba68c8 0%, #9c27b0 100%);
+}
+
+@media (max-width: 1200px) {
+  .periodic-cell {
+    width: 50px;
+    height: 60px;
+    font-size: 0.6rem;
+  }
+  
+  .element-symbol {
+    font-size: 0.85rem;
+  }
+  
+  .element-name {
+    font-size: 0.45rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .periodic-table-container {
+    padding: 10px;
+  }
+  
+  .periodic-cell {
+    width: 40px;
+    height: 50px;
+    font-size: 0.5rem;
+  }
+  
+  .element-symbol {
+    font-size: 0.7rem;
+  }
+  
+  .element-name {
+    font-size: 0.4rem;
+  }
+  
+  .element-number {
+    font-size: 0.5rem;
+  }
+  
+  .row-label {
+    min-width: 80px;
+    font-size: 0.8rem;
+  }
+}
+

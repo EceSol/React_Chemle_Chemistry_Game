@@ -1,0 +1,134 @@
+.chemle-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.chemle-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.chemle-header h1 {
+  font-size: 3rem;
+  margin: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+.game-info {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 15px;
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.hint-text {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 10px;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  margin: 30px 0 20px 0;
+  color: #333;
+  text-align: center;
+}
+
+.periodic-table-section {
+  margin-bottom: 40px;
+}
+
+.guesses-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.guess-button {
+  display: block;
+  margin: 20px auto;
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.guess-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.guess-button:active {
+  transform: translateY(0);
+}
+
+.game-result {
+  text-align: center;
+  padding: 30px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.game-result.win {
+  background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+  color: #1a1a1a;
+}
+
+.game-result.lose {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  color: #1a1a1a;
+}
+
+.game-result h2 {
+  margin-top: 0;
+}
+
+.game-result button {
+  margin-top: 15px;
+  padding: 10px 25px;
+  font-size: 1rem;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.game-result button:hover {
+  background: #555;
+}
+
+.loading {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .chemle-header h1 {
+    font-size: 2rem;
+  }
+  
+  .chemle-container {
+    padding: 10px;
+  }
+}
+

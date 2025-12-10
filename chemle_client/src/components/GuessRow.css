@@ -1,0 +1,134 @@
+.guess-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 10px;
+  padding: 15px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.guess-row.empty {
+  opacity: 0.5;
+}
+
+.guess-row.active {
+  border-color: #667eea;
+  box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+  }
+}
+
+.guess-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 6px;
+  min-height: 80px;
+}
+
+.element-cell {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  font-weight: bold;
+}
+
+.element-symbol-large {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.element-name-small {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+.hint-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.hint-label {
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  color: #666;
+}
+
+.hint-value {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.hint-icon {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Grup ipuçları */
+.hint-cell.correct {
+  background: #4caf50;
+  color: white;
+}
+
+.hint-cell.left {
+  background: #ff9800;
+  color: white;
+}
+
+.hint-cell.right {
+  background: #2196f3;
+  color: white;
+}
+
+/* Periyot ipuçları */
+.hint-cell.up {
+  background: #ff9800;
+  color: white;
+}
+
+.hint-cell.down {
+  background: #2196f3;
+  color: white;
+}
+
+/* Tür ipuçları */
+.hint-cell.wrong {
+  background: #f44336;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .guess-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .element-symbol-large {
+    font-size: 1.5rem;
+  }
+  
+  .guess-cell {
+    min-height: 60px;
+  }
+}
+
