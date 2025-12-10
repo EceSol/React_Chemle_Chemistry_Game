@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { elements, getTodayElement, compareElements } from '../data/elements';
 import PeriodicTable from './PeriodicTable';
 import GuessRow from './GuessRow';
@@ -12,6 +12,7 @@ function Chemle() {
   const [currentGuess, setCurrentGuess] = useState(null);
   const [gameWon, setGameWon] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const guessRowRefs = useRef([]);
 
   useEffect(() => {
     const todayElement = getTodayElement();
@@ -34,8 +35,20 @@ function Chemle() {
       setGameOver(true);
     }
 
-    setGuesses([...guesses, newGuess]);
+    const newGuesses = [...guesses, newGuess];
+    setGuesses(newGuesses);
     setCurrentGuess(null);
+    
+    // Smooth scroll to the specific guess row
+    setTimeout(() => {
+      const guessIndex = newGuesses.length - 1;
+      if (guessRowRefs.current[guessIndex]) {
+        guessRowRefs.current[guessIndex].scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+      }
+    }, 300);
   };
 
   const resetGame = () => {
@@ -55,15 +68,8 @@ function Chemle() {
     <div className="chemle-container">
       <header className="chemle-header">
         <h1>🧪 CHEMLE</h1>
-        <p className="subtitle">Element Tahmin Oyunu</p>
+        <p className="subtitle">Günün Elementini Tahmin Et</p>
       </header>
-
-      <div className="game-info">
-        <p>Günün gizli elementini bul! 6 tahmin hakkın var.</p>
-        <p className="hint-text">
-          İpuçları: Grup (sütun), Periyot (satır), Tür (metal/ametal/yarı metal/soygaz)
-        </p>
-      </div>
 
       {!gameWon && !gameOver && guesses.length < MAX_GUESSES && (
         <div className="periodic-table-section">
@@ -82,6 +88,7 @@ function Chemle() {
           return (
             <GuessRow
               key={index}
+              ref={(el) => (guessRowRefs.current[index] = el)}
               guess={guess}
               isActive={!guess && index === guesses.length && !gameOver && !gameWon}
             />

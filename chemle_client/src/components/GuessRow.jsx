@@ -1,9 +1,10 @@
+import { forwardRef } from 'react';
 import './GuessRow.css';
 
-function GuessRow({ guess, isActive }) {
+const GuessRow = forwardRef(function GuessRow({ guess, isActive }, ref) {
   if (!guess && !isActive) {
     return (
-      <div className="guess-row empty">
+      <div className="guess-row empty" ref={ref}>
         <div className="guess-cell">-</div>
         <div className="guess-cell">-</div>
         <div className="guess-cell">-</div>
@@ -14,7 +15,7 @@ function GuessRow({ guess, isActive }) {
 
   if (isActive) {
     return (
-      <div className="guess-row active">
+      <div className="guess-row active" ref={ref}>
         <div className="guess-cell">?</div>
         <div className="guess-cell">?</div>
         <div className="guess-cell">?</div>
@@ -68,7 +69,7 @@ function GuessRow({ guess, isActive }) {
   };
 
   return (
-    <div className="guess-row">
+    <div className="guess-row" ref={ref}>
       <div className="guess-cell element-cell">
         <div className="element-symbol-large">{element.symbol}</div>
         <div className="element-name-small">{element.name}</div>
@@ -90,7 +91,7 @@ function GuessRow({ guess, isActive }) {
       </div>
     </div>
   );
-}
+});
 
 export default GuessRow;
 

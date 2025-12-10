@@ -238,6 +238,8 @@
   flex-direction: column;
   gap: 10px;
   margin-bottom: 20px;
+  scroll-margin-top: 20px;
+  padding-top: 20px;
 }
 
 .guess-button {
