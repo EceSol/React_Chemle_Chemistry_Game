@@ -1,0 +1,13 @@
+{
+  "buildCommand": "cd chemle_client && npm install && npm run build",
+  "outputDirectory": "chemle_client/dist",
+  "devCommand": "cd chemle_client && npm run dev",
+  "installCommand": "cd chemle_client && npm install",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+
