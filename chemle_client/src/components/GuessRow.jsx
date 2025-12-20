@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import './GuessRow.css';
 
 const GuessRow = forwardRef(function GuessRow({ guess, isActive }, ref) {
@@ -93,5 +93,5 @@ const GuessRow = forwardRef(function GuessRow({ guess, isActive }, ref) {
   );
 });
 
-export default GuessRow;
+export default React.memo(GuessRow);
 

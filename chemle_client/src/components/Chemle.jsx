@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { elements, getTodayElement, compareElements } from '../data/elements';
 import PeriodicTable from './PeriodicTable';
 import GuessRow from './GuessRow';
@@ -19,37 +19,38 @@ function Chemle() {
     setTargetElement(todayElement);
   }, []);
 
-  const handleElementSelect = (element) => {
-    if (gameWon || gameOver || guesses.length >= MAX_GUESSES) return;
+  const handleElementSelect = useCallback((element) => {
+    if (gameWon || gameOver) return;
 
     const comparison = compareElements(element, targetElement);
-    const newGuess = {
-      element,
-      comparison
-    };
+    const newGuess = { element, comparison };
 
-    if (comparison.isCorrect) {
-      setGameWon(true);
-      setGameOver(true);
-    } else if (guesses.length + 1 >= MAX_GUESSES) {
-      setGameOver(true);
-    }
+    setGuesses(prev => {
+      const newGuesses = [...prev, newGuess];
 
-    const newGuesses = [...guesses, newGuess];
-    setGuesses(newGuesses);
-    setCurrentGuess(null);
-    
-    // Smooth scroll to the specific guess row
-    setTimeout(() => {
-      const guessIndex = newGuesses.length - 1;
-      if (guessRowRefs.current[guessIndex]) {
-        guessRowRefs.current[guessIndex].scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'center' 
-        });
+      if (comparison.isCorrect) {
+        setGameWon(true);
+        setGameOver(true);
+      } else if (prev.length + 1 >= MAX_GUESSES) {
+        setGameOver(true);
       }
-    }, 300);
-  };
+
+      setCurrentGuess(null);
+
+      // Smooth scroll to the specific guess row
+      setTimeout(() => {
+        const guessIndex = newGuesses.length - 1;
+        if (guessRowRefs.current[guessIndex]) {
+          guessRowRefs.current[guessIndex].scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
+      }, 300);
+
+      return newGuesses;
+    });
+  }, [gameWon, gameOver, targetElement]);
 
   const resetGame = () => {
     const todayElement = getTodayElement();
@@ -59,6 +60,8 @@ function Chemle() {
     setGameWon(false);
     setGameOver(false);
   };
+
+  const disabledElementsMemo = useMemo(() => guesses.map(g => g.element), [guesses]);
 
   if (!targetElement) {
     return <div className="loading">Yükleniyor...</div>;
@@ -76,7 +79,7 @@ function Chemle() {
           <h2 className="section-title">Periyodik Tablodan Element Seç</h2>
           <PeriodicTable
             onElementSelect={handleElementSelect}
-            disabledElements={guesses.map(g => g.element)}
+            disabledElements={disabledElementsMemo}
           />
         </div>
       )}

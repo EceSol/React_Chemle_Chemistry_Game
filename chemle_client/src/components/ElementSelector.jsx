@@ -1,25 +1,23 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import './ElementSelector.css';
 
 function ElementSelector({ elements, onSelect, onClose }) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredElements, setFilteredElements] = useState(elements);
 
   const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
-    
-    if (term === '') {
-      setFilteredElements(elements);
-    } else {
-      const filtered = elements.filter(el => 
-        el.symbol.toLowerCase().includes(term) ||
-        el.name.toLowerCase().includes(term) ||
-        el.atomicNumber.toString().includes(term)
-      );
-      setFilteredElements(filtered);
-    }
   };
+
+  const filteredElements = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (term === '') return elements;
+    return elements.filter(el =>
+      el.symbol.toLowerCase().includes(term) ||
+      el.name.toLowerCase().includes(term) ||
+      el.atomicNumber.toString().includes(term)
+    );
+  }, [elements, searchTerm]);
 
   const handleElementClick = (element) => {
     onSelect(element);

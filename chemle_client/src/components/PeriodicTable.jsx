@@ -1,113 +1,108 @@
+import React, { useMemo, useCallback } from 'react';
 import { elements } from '../data/elements';
 import './PeriodicTable.css';
 
 function PeriodicTable({ onElementSelect, disabledElements = [] }) {
-  // Periyodik tablo yapısını oluştur
-  const createTableStructure = () => {
+  // build lookups and table structure once (memoized) to avoid repeated .find calls
+  const tableStructure = useMemo(() => {
     const table = [];
-    
-    // Her periyot için satır oluştur
+    const posMap = new Map();
+    const atomicMap = new Map();
+
+    elements.forEach(e => {
+      posMap.set(`${e.period}-${e.group}`, e);
+      atomicMap.set(e.atomicNumber, e);
+      atomicMap.set(e.symbol, e);
+    });
+
     for (let period = 1; period <= 7; period++) {
       const row = [];
-      
+
       if (period === 1) {
-        // Periyot 1: H ve He
-        row.push({ element: elements.find(e => e.symbol === 'H'), col: 1 });
-        // Boş hücreler
+        row.push({ element: posMap.get('1-1') || elements.find(e => e.symbol === 'H'), col: 1 });
         for (let i = 2; i <= 17; i++) {
           row.push({ element: null, col: i });
         }
-        row.push({ element: elements.find(e => e.symbol === 'He'), col: 18 });
-      } else if (period === 2 || period === 3) {
-        // Periyot 2 ve 3: Normal yapı
+        row.push({ element: posMap.get('1-18') || elements.find(e => e.symbol === 'He'), col: 18 });
+      } else if (period === 2 || period === 3 || period === 4 || period === 5) {
         for (let group = 1; group <= 18; group++) {
-          const element = elements.find(e => e.period === period && e.group === group);
+          const element = posMap.get(`${period}-${group}`) || null;
           row.push({ element, col: group });
         }
-      } else if (period === 4 || period === 5) {
-        // Periyot 4 ve 5: Geçiş metalleri dahil
-        for (let group = 1; group <= 18; group++) {
-          const element = elements.find(e => e.period === period && e.group === group);
-          row.push({ element, col: group });
-        }
-      } else if (period === 6) {
-        // Periyot 6: Lantanitler için özel yapı
-        // İlk 2 element
+      } else if (period === 6 || period === 7) {
         for (let group = 1; group <= 2; group++) {
-          const element = elements.find(e => e.period === period && e.group === group);
+          const element = posMap.get(`${period}-${group}`) || null;
           row.push({ element, col: group });
         }
-        // Lantan (La) - grup 3
-        row.push({ element: elements.find(e => e.symbol === 'La'), col: 3 });
-        // Boş hücreler (Lantanitler için)
+
+        const specialSymbol = period === 6 ? 'La' : 'Ac';
+        row.push({ element: atomicMap.get(specialSymbol), col: 3 });
+
         for (let i = 4; i <= 17; i++) {
           row.push({ element: null, col: i });
         }
-        // Son elementler
+
         for (let group = 4; group <= 18; group++) {
-          const element = elements.find(e => e.period === period && e.group === group);
-          row.push({ element, col: group });
-        }
-      } else if (period === 7) {
-        // Periyot 7: Aktinitler için özel yapı
-        // İlk 2 element
-        for (let group = 1; group <= 2; group++) {
-          const element = elements.find(e => e.period === period && e.group === group);
-          row.push({ element, col: group });
-        }
-        // Aktinyum (Ac) - grup 3
-        row.push({ element: elements.find(e => e.symbol === 'Ac'), col: 3 });
-        // Boş hücreler (Aktinitler için)
-        for (let i = 4; i <= 17; i++) {
-          row.push({ element: null, col: i });
-        }
-        // Son elementler
-        for (let group = 4; group <= 18; group++) {
-          const element = elements.find(e => e.period === period && e.group === group);
+          const element = posMap.get(`${period}-${group}`) || null;
           row.push({ element, col: group });
         }
       }
-      
+
       table.push({ period, cells: row });
     }
-    
-    return table;
-  };
 
-  const tableStructure = createTableStructure();
+    return { table, atomicMap };
+  }, []);
 
-  const getElementTypeClass = (element) => {
-    if (!element) return '';
-    // Boşlukları tire ile değiştir (CSS class adları için)
-    const typeClass = element.type.replace(/\s+/g, '-');
-    return `element-type-${typeClass}`;
-  };
+  const { table: memoTable, atomicMap } = tableStructure;
 
-  const isDisabled = (element) => {
+  const getElementTypeClass = useCallback((element) => {
+    if (!element || !element.type) return '';
+    return `element-type-${element.type.replace(/\s+/g, '-')}`;
+  }, []);
+
+  const disabledSet = useMemo(() => {
+    return new Set(disabledElements.map(d => d && d.symbol));
+  }, [disabledElements]);
+
+  const isDisabled = useCallback((element) => {
     if (!element) return false;
-    return disabledElements.some(disabled => disabled.symbol === element.symbol);
-  };
+    return disabledSet.has(element.symbol);
+  }, [disabledSet]);
 
-  const handleElementClick = (element) => {
+  const handleElementClick = useCallback((element) => {
     if (element && !isDisabled(element) && onElementSelect) {
       onElementSelect(element);
     }
-  };
+  }, [isDisabled, onElementSelect]);
+
+  // Event delegation: single click handler on container
+  const onPeriodicContainerClick = useCallback((e) => {
+    const cell = e.target.closest && e.target.closest('.periodic-cell');
+    if (!cell) return;
+    const symbol = cell.dataset && cell.dataset.symbol;
+    const atomic = cell.dataset && cell.dataset.atomic;
+    const element = symbol ? atomicMap.get(symbol) || atomicMap.get(Number(atomic)) : null;
+    if (element && !isDisabled(element) && onElementSelect) {
+      onElementSelect(element);
+    }
+  }, [atomicMap, isDisabled, onElementSelect]);
 
   return (
     <div className="periodic-table-container">
-      <div className="periodic-table">
-        {tableStructure.map((row) => (
+      <div className="periodic-table" onClick={onPeriodicContainerClick}>
+        {memoTable.map((row) => (
           <div key={row.period} className="periodic-row">
             {row.cells.map((cell, index) => {
               const { element } = cell;
               const disabled = isDisabled(element);
-              
+
               return (
               <div
                 key={`${row.period}-${index}`}
                 className={`periodic-cell ${getElementTypeClass(element)} ${element ? '' : 'empty'} ${disabled ? 'disabled selected' : ''}`}
-                onClick={() => handleElementClick(element)}
+                data-symbol={element ? element.symbol : ''}
+                data-atomic={element ? element.atomicNumber : ''}
                 title={element ? `${element.name} (${element.symbol}) - ${element.type}` : ''}
               >
                   {element && (
@@ -129,13 +124,14 @@ function PeriodicTable({ onElementSelect, disabledElements = [] }) {
         <div className="lanthanides-row">
           <div className="row-label">Lantanitler:</div>
           {[57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71].map(atomicNum => {
-            const element = elements.find(e => e.atomicNumber === atomicNum);
+            const element = atomicMap.get(atomicNum) || null;
             const disabled = isDisabled(element);
             return (
               <div
                 key={atomicNum}
                 className={`periodic-cell ${getElementTypeClass(element)} ${disabled ? 'disabled selected' : ''}`}
-                onClick={() => handleElementClick(element)}
+                data-atomic={element ? element.atomicNumber : ''}
+                data-symbol={element ? element.symbol : ''}
                 title={element ? `${element.name} (${element.symbol})` : ''}
               >
                 {element && (
@@ -153,13 +149,14 @@ function PeriodicTable({ onElementSelect, disabledElements = [] }) {
         <div className="actinides-row">
           <div className="row-label">Aktinitler:</div>
           {[89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103].map(atomicNum => {
-            const element = elements.find(e => e.atomicNumber === atomicNum);
+            const element = atomicMap.get(atomicNum) || null;
             const disabled = isDisabled(element);
             return (
               <div
                 key={atomicNum}
                 className={`periodic-cell ${getElementTypeClass(element)} ${disabled ? 'disabled selected' : ''}`}
-                onClick={() => handleElementClick(element)}
+                data-atomic={element ? element.atomicNumber : ''}
+                data-symbol={element ? element.symbol : ''}
                 title={element ? `${element.name} (${element.symbol})` : ''}
               >
                 {element && (
@@ -197,5 +194,5 @@ function PeriodicTable({ onElementSelect, disabledElements = [] }) {
   );
 }
 
-export default PeriodicTable;
+export default React.memo(PeriodicTable);
 

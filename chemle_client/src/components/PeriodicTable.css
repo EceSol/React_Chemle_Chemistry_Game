@@ -1,11 +1,12 @@
 .periodic-table-container {
   width: 100%;
   padding: 30px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.96);
+  /* reduced blur to lower repaint cost */
+  backdrop-filter: blur(6px);
   border-radius: 20px;
   box-shadow: 
-    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 18px 48px rgba(0, 0, 0, 0.12),
     0 0 0 1px rgba(255, 255, 255, 0.5) inset;
   margin-bottom: 30px;
   position: relative;
@@ -20,9 +21,11 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+  /* keep a slow rotation but it's transform-only (composite) */
   animation: rotate 20s linear infinite;
   pointer-events: none;
+  will-change: transform;
 }
 
 @keyframes containerFadeIn {
@@ -57,6 +60,7 @@
   gap: 3px;
   justify-content: flex-start;
   animation: rowFadeIn 0.6s ease-out backwards;
+  will-change: transform, opacity;
 }
 
 .periodic-row:nth-child(1) { animation-delay: 0.1s; }
@@ -88,29 +92,34 @@
   border: 2px solid rgba(221, 221, 221, 0.5);
   border-radius: 10px;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* only transform/opacity are animated to stay on compositor layer */
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
   position: relative;
   font-size: 0.7rem;
   padding: 5px;
   overflow: hidden;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* removed per-cell backdrop-filter (expensive) */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  backface-visibility: hidden;
 }
 
 .periodic-cell::before {
   content: '';
   position: absolute;
   top: 0;
-  left: -100%;
+  left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transition: left 0.6s;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  /* move via transform (composite) instead of left (layout) */
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
   z-index: 1;
+  pointer-events: none;
 }
 
 .periodic-cell:not(.empty):not(.disabled):hover::before {
-  left: 100%;
+  transform: translateX(100%);
 }
 
 .periodic-cell:not(.empty) {
@@ -120,11 +129,11 @@
 @keyframes cellAppear {
   from {
     opacity: 0;
-    transform: scale(0.8) rotateY(90deg);
+    transform: scale(0.88) translateZ(0);
   }
   to {
     opacity: 1;
-    transform: scale(1) rotateY(0deg);
+    transform: scale(1) translateZ(0);
   }
 }
 
@@ -135,30 +144,19 @@
 }
 
 .periodic-cell:not(.empty):not(.disabled):not(.selected):hover {
-  transform: scale(1.2) translateY(-3px) rotate(2deg);
+  transform: scale(1.12) translateY(-4px) translateZ(0);
   z-index: 10;
-  box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.3),
-    0 0 20px rgba(102, 126, 234, 0.6),
-    0 0 40px rgba(102, 126, 234, 0.3);
+  /* keep box-shadow static to avoid costly box-shadow animations */
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18), 0 0 18px rgba(102, 126, 234, 0.4);
   border-color: #667eea;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  animation: cellPulse 1s ease-in-out infinite;
+  /* lightweight pulse via transform only */
+  animation: cellPulseTransform 1.2s ease-in-out infinite;
+  will-change: transform;
 }
 
-@keyframes cellPulse {
-  0%, 100% {
-    box-shadow: 
-      0 10px 30px rgba(0, 0, 0, 0.3),
-      0 0 20px rgba(102, 126, 234, 0.6),
-      0 0 40px rgba(102, 126, 234, 0.3);
-  }
-  50% {
-    box-shadow: 
-      0 12px 35px rgba(0, 0, 0, 0.4),
-      0 0 25px rgba(102, 126, 234, 0.8),
-      0 0 50px rgba(102, 126, 234, 0.5);
-  }
+@keyframes cellPulseTransform {
+  0%, 100% { transform: scale(1.12) translateY(-4px); }
+  50% { transform: scale(1.15) translateY(-6px); }
 }
 
 .periodic-cell.disabled {
@@ -168,16 +166,26 @@
 
 /* Seçilen elementler için kırmızı glow efekti - Daha dramatik */
 .periodic-cell.selected {
-  animation: selectedGlow 1.5s ease-in-out infinite;
   border: 3px solid #ff1744 !important;
-  box-shadow: 
-    0 0 25px rgba(255, 23, 68, 1), 
-    0 0 50px rgba(255, 23, 68, 0.8),
-    0 0 75px rgba(255, 23, 68, 0.6),
-    0 0 100px rgba(255, 23, 68, 0.4) !important;
-  transform: scale(1.1);
+  transform: scale(1.06);
   z-index: 20;
   position: relative;
+}
+
+/* lightweight glow using pseudo-element opacity (composite) instead of animating box-shadow */
+.periodic-cell.selected::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 14px;
+  background: radial-gradient(circle at 50% 30%, rgba(255,23,68,0.9) 0%, rgba(255,23,68,0.35) 30%, transparent 60%);
+  z-index: 0;
+  filter: blur(14px);
+  opacity: 0.9;
+  pointer-events: none;
+  transform: translateZ(0);
+  will-change: opacity, transform;
+  animation: selectedGlowOpacity 1.6s ease-in-out infinite;
 }
 
 .periodic-cell.selected::after {
@@ -195,36 +203,19 @@
   color: white;
   font-weight: bold;
   font-size: 14px;
-  box-shadow: 0 2px 8px rgba(255, 23, 68, 0.8);
+  box-shadow: 0 2px 8px rgba(255, 23, 68, 0.6);
   animation: checkmarkPulse 1s ease-in-out infinite;
+  z-index: 3;
 }
 
 @keyframes checkmarkPulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
-  }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
 }
 
-@keyframes selectedGlow {
-  0%, 100% {
-    box-shadow: 
-      0 0 25px rgba(255, 23, 68, 1), 
-      0 0 50px rgba(255, 23, 68, 0.8),
-      0 0 75px rgba(255, 23, 68, 0.6),
-      0 0 100px rgba(255, 23, 68, 0.4);
-    transform: scale(1.1);
-  }
-  50% {
-    box-shadow: 
-      0 0 35px rgba(255, 23, 68, 1), 
-      0 0 70px rgba(255, 23, 68, 0.9),
-      0 0 105px rgba(255, 23, 68, 0.7),
-      0 0 140px rgba(255, 23, 68, 0.5);
-    transform: scale(1.15);
-  }
+@keyframes selectedGlowOpacity {
+  0%, 100% { opacity: 0.85; transform: scale(1.02); }
+  50% { opacity: 1; transform: scale(1.04); }
 }
 
 .element-number {
