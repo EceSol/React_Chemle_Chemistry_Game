@@ -464,6 +464,68 @@
     height: 48px;
   }
 
+  /* Strong responsive grid for very small screens: use grid so cells never overflow viewport
+     and maintain readable sizes. Use display:contents for rows so cells flow into grid. */
+  .periodic-table {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(40px, 1fr));
+    gap: 6px;
+  }
+
+  .periodic-row {
+    display: contents;
+  }
+
+  .periodic-cell {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    padding: 4px 6px;
+    box-sizing: border-box;
+  }
+
+  .lanthanides-row,
+  .actinides-row {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(36px, 1fr);
+    gap: 6px;
+    overflow-x: auto;
+  }
+
+  .legend {
+    align-items: center;
+  }
+
+
+/* Orientation/landscape tweaks for phones: use more columns to better use width */
+@media (max-width: 812px) and (orientation: landscape) {
+  .periodic-table {
+    grid-template-columns: repeat(8, minmax(40px, 1fr));
+  }
+
+  .periodic-cell {
+    aspect-ratio: 5 / 6;
+  }
+}
+
+/* Slightly larger phones / small tablets portrait */
+@media (min-width: 421px) and (max-width: 768px) {
+  .periodic-table {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(44px, 1fr));
+    gap: 8px;
+  }
+
+  .periodic-row {
+    display: contents;
+  }
+
+  .periodic-cell {
+    aspect-ratio: 4 / 5;
+    padding: 5px;
+  }
+}
   .element-symbol {
     font-size: 0.95rem;
   }
