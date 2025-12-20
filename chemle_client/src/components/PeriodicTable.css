@@ -390,6 +390,84 @@
   background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%);
 }
 
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .periodic-cell {
+    width: 56px;
+    height: 64px;
+  }
+
+  .element-symbol {
+    font-size: 1rem;
+  }
+
+  .element-name {
+    font-size: 0.45rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .periodic-table-container {
+    padding: 16px;
+    /* allow horizontal scroll inside for easier navigation on small screens */
+    overflow: visible;
+  }
+
+  .periodic-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .periodic-row {
+    min-width: 1200px; /* keep 18-cell layout; user can scroll horizontally */
+    gap: 6px;
+  }
+
+  .periodic-cell {
+    flex: 0 0 auto;
+    width: 48px;
+    height: 56px;
+    padding: 4px;
+    border-radius: 8px;
+    font-size: 0.65rem;
+  }
+
+  .element-number {
+    font-size: 0.6rem;
+  }
+
+  .lanthanides-row,
+  .actinides-row {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+  }
+
+  .legend {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 420px) {
+  .periodic-row {
+    min-width: 1000px;
+  }
+
+  .periodic-cell {
+    width: 44px;
+    height: 52px;
+  }
+
+  .element-symbol {
+    font-size: 0.95rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+}
+
 .legend-color.element-type-ametal {
   background: linear-gradient(135deg, #81c784 0%, #4caf50 100%);
 }
