@@ -1,37 +1,39 @@
 .periodic-table-container {
+  --cell-size: 62px;
+  --cell-gap: 6px;
   width: 100%;
-  padding: 30px;
-  background: rgba(255, 255, 255, 0.96);
-  /* reduced blur to lower repaint cost */
-  backdrop-filter: blur(6px);
-  border-radius: 20px;
-  box-shadow: 
-    0 18px 48px rgba(0, 0, 0, 0.12),
-    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-  margin-bottom: 30px;
+  max-width: 1320px;
+  margin: 0 auto 28px;
+  padding: 20px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.12), transparent 45%),
+    radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.08), transparent 35%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 40%, rgba(255, 255, 255, 0.12) 100%);
+  color: #e7edf7;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 18px 38px rgba(0, 0, 0, 0.28),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
   position: relative;
   overflow: hidden;
   animation: containerFadeIn 0.8s ease-out;
+  backdrop-filter: blur(10px);
 }
 
 .periodic-table-container::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
-  /* keep a slow rotation but it's transform-only (composite) */
-  animation: rotate 20s linear infinite;
+  inset: -60% -20%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+  animation: rotate 22s linear infinite;
   pointer-events: none;
-  will-change: transform;
 }
 
 @keyframes containerFadeIn {
   from {
     opacity: 0;
-    transform: translateY(30px) scale(0.95);
+    transform: translateY(24px) scale(0.96);
   }
   to {
     opacity: 1;
@@ -51,30 +53,35 @@
 .periodic-table {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  margin-bottom: 20px;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+  overflow-x: auto;
+  padding-bottom: 6px;
 }
 
 .periodic-row {
-  display: flex;
-  gap: 3px;
-  justify-content: flex-start;
-  animation: rowFadeIn 0.6s ease-out backwards;
-  will-change: transform, opacity;
+  display: grid;
+  grid-template-columns: repeat(18, var(--cell-size));
+  gap: var(--cell-gap);
+  justify-content: start;
+  width: max-content;
+  margin: 0;
+  animation: rowFadeIn 0.5s ease-out backwards;
 }
 
-.periodic-row:nth-child(1) { animation-delay: 0.1s; }
-.periodic-row:nth-child(2) { animation-delay: 0.2s; }
-.periodic-row:nth-child(3) { animation-delay: 0.3s; }
-.periodic-row:nth-child(4) { animation-delay: 0.4s; }
-.periodic-row:nth-child(5) { animation-delay: 0.5s; }
-.periodic-row:nth-child(6) { animation-delay: 0.6s; }
-.periodic-row:nth-child(7) { animation-delay: 0.7s; }
+.periodic-row:nth-child(1) { animation-delay: 0.05s; }
+.periodic-row:nth-child(2) { animation-delay: 0.1s; }
+.periodic-row:nth-child(3) { animation-delay: 0.15s; }
+.periodic-row:nth-child(4) { animation-delay: 0.2s; }
+.periodic-row:nth-child(5) { animation-delay: 0.25s; }
+.periodic-row:nth-child(6) { animation-delay: 0.3s; }
+.periodic-row:nth-child(7) { animation-delay: 0.35s; }
 
 @keyframes rowFadeIn {
   from {
     opacity: 0;
-    transform: translateX(-30px);
+    transform: translateX(-24px);
   }
   to {
     opacity: 1;
@@ -83,38 +90,32 @@
 }
 
 .periodic-cell {
-  width: 65px;
-  height: 75px;
+  width: var(--cell-size);
+  height: 74px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(221, 221, 221, 0.5);
-  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 11px;
   cursor: pointer;
-  /* only transform/opacity are animated to stay on compositor layer */
-  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
   position: relative;
-  font-size: 0.7rem;
-  padding: 5px;
-  overflow: hidden;
-  /* removed per-cell backdrop-filter (expensive) */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  backface-visibility: hidden;
+  font-size: 0.72rem;
+  padding: 6px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+  background: rgba(16, 20, 31, 0.6);
+  color: #e7edf7;
 }
 
 .periodic-cell::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
-  /* move via transform (composite) instead of left (layout) */
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
   transform: translateX(-100%);
-  transition: transform 0.5s ease;
-  z-index: 1;
+  transition: transform 0.45s ease;
   pointer-events: none;
 }
 
@@ -122,498 +123,286 @@
   transform: translateX(100%);
 }
 
-.periodic-cell:not(.empty) {
-  animation: cellAppear 0.5s ease-out backwards;
+.periodic-cell:not(.empty):not(.disabled):hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.12);
+  z-index: 2;
 }
 
-@keyframes cellAppear {
-  from {
-    opacity: 0;
-    transform: scale(0.88) translateZ(0);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateZ(0);
-  }
-}
-
-.periodic-cell.empty {
+.periodic-cell.empty,
+.periodic-cell.spacer {
+  visibility: hidden;
+  pointer-events: none;
   border: none;
-  cursor: default;
   background: transparent;
-}
-
-.periodic-cell:not(.empty):not(.disabled):not(.selected):hover {
-  transform: scale(1.12) translateY(-4px) translateZ(0);
-  z-index: 10;
-  /* keep box-shadow static to avoid costly box-shadow animations */
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18), 0 0 18px rgba(102, 126, 234, 0.4);
-  border-color: #667eea;
-  /* lightweight pulse via transform only */
-  animation: cellPulseTransform 1.2s ease-in-out infinite;
-  will-change: transform;
-}
-
-@keyframes cellPulseTransform {
-  0%, 100% { transform: scale(1.12) translateY(-4px); }
-  50% { transform: scale(1.15) translateY(-6px); }
+  box-shadow: none;
 }
 
 .periodic-cell.disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
-/* Seçilen elementler için kırmızı glow efekti - Daha dramatik */
 .periodic-cell.selected {
-  border: 3px solid #ff1744 !important;
-  transform: scale(1.06);
-  z-index: 20;
-  position: relative;
-}
-
-/* lightweight glow using pseudo-element opacity (composite) instead of animating box-shadow */
-.periodic-cell.selected::before {
-  content: '';
-  position: absolute;
-  inset: -8px;
-  border-radius: 14px;
-  background: radial-gradient(circle at 50% 30%, rgba(255,23,68,0.9) 0%, rgba(255,23,68,0.35) 30%, transparent 60%);
-  z-index: 0;
-  filter: blur(14px);
-  opacity: 0.9;
-  pointer-events: none;
-  transform: translateZ(0);
-  will-change: opacity, transform;
-  animation: selectedGlowOpacity 1.6s ease-in-out infinite;
-}
-
-.periodic-cell.selected::after {
-  content: '✓';
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  width: 24px;
-  height: 24px;
-  background: #ff1744;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  font-size: 14px;
-  box-shadow: 0 2px 8px rgba(255, 23, 68, 0.6);
-  animation: checkmarkPulse 1s ease-in-out infinite;
-  z-index: 3;
-}
-
-@keyframes checkmarkPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
-}
-
-@keyframes selectedGlowOpacity {
-  0%, 100% { opacity: 0.85; transform: scale(1.02); }
-  50% { opacity: 1; transform: scale(1.04); }
+  outline: 2px solid #ff6b6b;
+  outline-offset: 2px;
 }
 
 .element-number {
   position: absolute;
-  top: 3px;
-  left: 5px;
+  top: 6px;
+  left: 6px;
   font-size: 0.65rem;
-  color: rgba(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 800;
-  background: rgba(255, 255, 255, 0.7);
-  padding: 2px 4px;
-  border-radius: 4px;
-  z-index: 3;
-  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.18);
+  padding: 2px 5px;
+  border-radius: 6px;
 }
 
 .element-symbol {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 900;
   color: inherit;
   margin-top: 8px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  position: relative;
-  z-index: 2;
   letter-spacing: -0.5px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
 .element-name {
-  font-size: 0.5rem;
-  color: inherit;
-  text-align: center;
+  font-size: 0.55rem;
+  color: rgba(255, 255, 255, 0.92);
   margin-top: 3px;
+  text-align: center;
   line-height: 1.1;
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 100%;
-  opacity: 0.9;
-  font-weight: 600;
-  position: relative;
-  z-index: 2;
+  overflow: hidden;
+  width: 100%;
 }
 
-/* Element türü renkleri - Daha canlı ve çekici */
-.element-type-metal {
-  background: linear-gradient(135deg, #ffd54f 0%, #ffb300 50%, #ffa000 100%);
-  color: #1a1a1a;
-  border-color: rgba(255, 179, 0, 0.6);
-  box-shadow: 0 4px 12px rgba(255, 179, 0, 0.3);
+/* element families */
+.element-family-alkali {
+  background: linear-gradient(135deg, #0d6f9b 0%, #28a7c0 100%);
+  border-color: rgba(40, 167, 192, 0.75);
 }
 
-.element-type-metal:hover:not(.disabled):not(.selected) {
-  box-shadow: 0 6px 20px rgba(255, 179, 0, 0.5);
-  transform: scale(1.15) translateY(-2px);
+.element-family-toprak-alkali {
+  background: linear-gradient(135deg, #a14b63 0%, #d07d8e 100%);
+  border-color: rgba(208, 125, 142, 0.8);
 }
 
-.element-type-ametal {
-  background: linear-gradient(135deg, #66bb6a 0%, #4caf50 50%, #388e3c 100%);
-  color: #fff;
-  border-color: rgba(76, 175, 80, 0.6);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+.element-family-gecis-metali {
+  background: linear-gradient(135deg, #514b9a 0%, #7265c4 100%);
+  border-color: rgba(114, 101, 196, 0.85);
 }
 
-.element-type-ametal:hover:not(.disabled):not(.selected) {
-  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
-  transform: scale(1.15) translateY(-2px);
+.element-family-yan-metal {
+  background: linear-gradient(135deg, #244e63 0%, #3f87a5 100%);
+  border-color: rgba(63, 135, 165, 0.82);
 }
 
-.element-type-yarı-metal {
-  background: linear-gradient(135deg, #42a5f5 0%, #2196f3 50%, #1976d2 100%);
-  color: #fff;
-  border-color: rgba(33, 150, 243, 0.6);
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+.element-family-yari-metal {
+  background: linear-gradient(135deg, #3a6a64 0%, #59b39a 100%);
+  border-color: rgba(89, 179, 154, 0.8);
 }
 
-.element-type-yarı-metal:hover:not(.disabled):not(.selected) {
-  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.5);
-  transform: scale(1.15) translateY(-2px);
+.element-family-ametal {
+  background: linear-gradient(135deg, #8a7c32 0%, #c5aa46 100%);
+  border-color: rgba(197, 170, 70, 0.78);
 }
 
-.element-type-soygaz {
-  background: linear-gradient(135deg, #ab47bc 0%, #9c27b0 50%, #7b1fa2 100%);
-  color: #fff;
-  border-color: rgba(156, 39, 176, 0.6);
-  box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+.element-family-soy-gaz {
+  background: linear-gradient(135deg, #6f4566 0%, #9b6ba0 100%);
+  border-color: rgba(155, 107, 160, 0.82);
 }
 
-.element-type-soygaz:hover:not(.disabled):not(.selected) {
-  box-shadow: 0 6px 20px rgba(156, 39, 176, 0.5);
-  transform: scale(1.15) translateY(-2px);
+.element-family-lantanit {
+  background: linear-gradient(135deg, #0d6ea8 0%, #1ea4d6 100%);
+  border-color: rgba(30, 164, 214, 0.8);
+}
+
+.element-family-aktinit {
+  background: linear-gradient(135deg, #7c4b2c 0%, #b77750 100%);
+  border-color: rgba(183, 119, 80, 0.78);
+}
+
+.element-family-belirsiz {
+  background: linear-gradient(135deg, #262b35 0%, #313640 100%);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #d7deea;
 }
 
 .lanthanides-actinides {
-  margin-top: 30px;
-  padding-top: 25px;
-  border-top: 2px solid rgba(221, 221, 221, 0.5);
-  animation: fadeInUp 0.8s ease-out 0.8s both;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.lanthanides-row,
-.actinides-row {
+  margin-top: 22px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
-  gap: 2px;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.series-row {
+  display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
+.series-grid {
+  display: grid;
+  grid-template-columns: repeat(18, var(--cell-size));
+  gap: var(--cell-gap);
+  width: max-content;
+  justify-content: start;
+}
+
 .row-label {
-  font-weight: bold;
-  margin-right: 10px;
-  min-width: 100px;
-  font-size: 0.9rem;
+  font-weight: 800;
+  font-size: 0.95rem;
+  min-width: 110px;
+  color: #dfe6f2;
 }
 
 .legend {
   display: flex;
-  justify-content: center;
-  gap: 25px;
-  margin-top: 25px;
-  padding-top: 25px;
-  border-top: 2px solid rgba(221, 221, 221, 0.5);
   flex-wrap: wrap;
-  position: relative;
-  z-index: 1;
+  gap: 12px 18px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .legend-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 15px;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 20px;
-  backdrop-filter: blur(5px);
-  transition: all 0.3s ease;
-  cursor: default;
-}
-
-.legend-item:hover {
-  background: rgba(255, 255, 255, 0.9);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #e7edf7;
 }
 
 .legend-color {
-  width: 35px;
-  height: 35px;
-  border-radius: 8px;
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
+  width: 32px;
+  height: 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.legend-item:hover .legend-color {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
+.legend-color.element-family-alkali { background: linear-gradient(135deg, #0d6f9b 0%, #1596b3 100%); }
+.legend-color.element-family-toprak-alkali { background: linear-gradient(135deg, #a14b63 0%, #c06b7b 100%); }
+.legend-color.element-family-gecis-metali { background: linear-gradient(135deg, #50458c 0%, #6a5ea7 100%); }
+.legend-color.element-family-yan-metal { background: linear-gradient(135deg, #244e63 0%, #3c7892 100%); }
+.legend-color.element-family-yari-metal { background: linear-gradient(135deg, #3a6a64 0%, #4f9c83 100%); }
+.legend-color.element-family-ametal { background: linear-gradient(135deg, #8a7c32 0%, #bfa23f 100%); }
+.legend-color.element-family-soy-gaz { background: linear-gradient(135deg, #6f4566 0%, #925e84 100%); }
+.legend-color.element-family-lantanit { background: linear-gradient(135deg, #0d6ea8 0%, #1594c8 100%); }
+.legend-color.element-family-aktinit { background: linear-gradient(135deg, #7c4b2c 0%, #a2643d 100%); }
+.legend-color.element-family-belirsiz { background: linear-gradient(135deg, #262b35 0%, #313640 100%); }
 
-.legend-color.element-type-metal {
-  background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%);
-}
+@media (max-width: 1300px) {
+  .periodic-table-container {
+    --cell-size: 64px;
+  }
 
-/* Responsive adjustments */
-@media (max-width: 1024px) {
   .periodic-cell {
-    width: 56px;
-    height: 64px;
+    height: 74px;
+  }
+
+  .row-label {
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .periodic-table-container {
+    --cell-size: 58px;
+    padding: 22px;
+  }
+
+  .periodic-cell {
+    height: 70px;
   }
 
   .element-symbol {
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
 
   .element-name {
-    font-size: 0.45rem;
+    font-size: 0.5rem;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 840px) {
   .periodic-table-container {
-    padding: 16px;
-    /* allow horizontal scroll inside for easier navigation on small screens */
-    overflow: visible;
+    --cell-size: 52px;
+    padding: 18px;
   }
 
   .periodic-table {
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    padding-bottom: 10px;
   }
 
-  /* Allow rows to wrap instead of forcing a huge min-width which caused overflow issues */
-  .periodic-row {
-    gap: 6px;
-    flex-wrap: wrap;
-    justify-content: center;
+  .periodic-row,
+  .series-grid {
+    justify-content: flex-start;
+  }
+
+  .row-label {
+    min-width: 90px;
+  }
+}
+
+@media (max-width: 640px) {
+  .periodic-table-container {
+    --cell-size: 46px;
   }
 
   .periodic-cell {
-    flex: 0 0 auto;
-    width: 48px;
-    height: 56px;
-    padding: 4px;
-    border-radius: 8px;
-    font-size: 0.65rem;
+    height: 64px;
+    border-radius: 10px;
+  }
+
+  .element-symbol {
+    font-size: 0.95rem;
   }
 
   .element-number {
-    font-size: 0.6rem;
-  }
-
-  .lanthanides-row,
-  .actinides-row {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 6px;
-    flex-wrap: wrap;
+    font-size: 0.58rem;
   }
 
   .legend {
-    flex-direction: column;
-    gap: 12px;
-  }
-}
-
-@media (max-width: 420px) {
-  .periodic-row {
-    gap: 5px;
-    flex-wrap: wrap;
     justify-content: center;
   }
-
-  .periodic-cell {
-    width: 40px;
-    height: 48px;
-  }
-
-  /* Strong responsive grid for very small screens: use grid so cells never overflow viewport
-     and maintain readable sizes. Use display:contents for rows so cells flow into grid. */
-  .periodic-table {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(40px, 1fr));
-    gap: 6px;
-  }
-
-  .periodic-row {
-    display: contents;
-  }
-
-  .periodic-cell {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 4 / 5;
-    padding: 4px 6px;
-    box-sizing: border-box;
-  }
-
-  .lanthanides-row,
-  .actinides-row {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(36px, 1fr);
-    gap: 6px;
-    overflow-x: auto;
-  }
-
-  .legend {
-    align-items: center;
-  }
-
-
-/* Orientation/landscape tweaks for phones: use more columns to better use width */
-@media (max-width: 812px) and (orientation: landscape) {
-  .periodic-table {
-    grid-template-columns: repeat(8, minmax(40px, 1fr));
-  }
-
-  .periodic-cell {
-    aspect-ratio: 5 / 6;
-  }
 }
 
-/* Slightly larger phones / small tablets portrait */
-@media (min-width: 421px) and (max-width: 768px) {
-  .periodic-table {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(44px, 1fr));
-    gap: 8px;
-  }
-
-  .periodic-row {
-    display: contents;
-  }
-
-  .periodic-cell {
-    aspect-ratio: 4 / 5;
-    padding: 5px;
-  }
-}
-  .element-symbol {
-    font-size: 0.95rem;
-  }
-
-  .section-title {
-    font-size: 1.25rem;
-  }
-}
-
-.legend-color.element-type-ametal {
-  background: linear-gradient(135deg, #81c784 0%, #4caf50 100%);
-}
-
-.legend-color.element-type-yarı-metal {
-  background: linear-gradient(135deg, #90caf9 0%, #42a5f5 100%);
-}
-
-.legend-color.element-type-soygaz {
-  background: linear-gradient(135deg, #ba68c8 0%, #9c27b0 100%);
-}
-
-@media (max-width: 1200px) {
+@media (max-width: 480px) {
   .periodic-table-container {
-    padding: 25px;
+    --cell-size: 42px;
   }
-  
+
   .periodic-cell {
-    width: 55px;
-    height: 65px;
-    font-size: 0.65rem;
+    height: 58px;
+    padding: 4px;
   }
-  
+
   .element-symbol {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
   }
-  
+
   .element-name {
     font-size: 0.48rem;
   }
-  
-  .element-number {
-    font-size: 0.6rem;
-  }
-}
 
-@media (max-width: 768px) {
-  .periodic-table-container {
-    padding: 15px;
-    border-radius: 15px;
-  }
-  
-  .periodic-cell {
-    width: 42px;
-    height: 52px;
-    font-size: 0.5rem;
-    border-radius: 8px;
-  }
-  
-  .element-symbol {
-    font-size: 0.75rem;
-    margin-top: 6px;
-  }
-  
-  .element-name {
-    font-size: 0.38rem;
-    margin-top: 2px;
-  }
-  
-  .element-number {
-    font-size: 0.5rem;
-    top: 2px;
-    left: 3px;
-    padding: 1px 3px;
-  }
-  
   .row-label {
-    min-width: 70px;
-    font-size: 0.75rem;
-  }
-  
-  .legend-item {
-    padding: 6px 12px;
-    gap: 8px;
-  }
-  
-  .legend-color {
-    width: 28px;
-    height: 28px;
+    font-size: 0.85rem;
   }
 }
-

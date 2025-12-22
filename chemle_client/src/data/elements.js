@@ -1,5 +1,5 @@
 // Periyodik tablo element verileri
-export const elements = [
+const baseElements = [
   // Periyot 1
   { symbol: 'H', name: 'Hidrojen', group: 1, period: 1, type: 'ametal', atomicNumber: 1 },
   { symbol: 'He', name: 'Helyum', group: 18, period: 1, type: 'soygaz', atomicNumber: 2 },
@@ -133,6 +133,45 @@ export const elements = [
   { symbol: 'Og', name: 'Oganesson', group: 18, period: 7, type: 'soygaz', atomicNumber: 118 },
 ];
 
+const alkaliMetals = new Set(['Li', 'Na', 'K', 'Rb', 'Cs', 'Fr']);
+const alkalineEarthMetals = new Set(['Be', 'Mg', 'Ca', 'Sr', 'Ba', 'Ra']);
+const transitionMetals = new Set([
+  'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn',
+  'Y', 'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd',
+  'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg',
+  'Rf', 'Db', 'Sg', 'Bh', 'Hs'
+]);
+const postTransitionMetals = new Set(['Al', 'Ga', 'In', 'Sn', 'Tl', 'Pb', 'Bi', 'Po', 'Fl', 'Nh', 'Mc', 'Lv']);
+const metalloids = new Set(['B', 'Si', 'Ge', 'As', 'Sb', 'Te', 'At']);
+const nonMetals = new Set(['H', 'C', 'N', 'O', 'P', 'S', 'Se', 'F', 'Cl', 'Br', 'I']);
+const nobleGases = new Set(['He', 'Ne', 'Ar', 'Kr', 'Xe', 'Rn', 'Og']);
+const lanthanides = new Set(['La', 'Ce', 'Pr', 'Nd', 'Pm', 'Sm', 'Eu', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu']);
+const actinides = new Set(['Ac', 'Th', 'Pa', 'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm', 'Md', 'No', 'Lr']);
+const unknownProps = new Set(['Mt', 'Ds', 'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts']);
+
+function determineFamily(element) {
+  const symbol = element.symbol;
+
+  if (unknownProps.has(symbol)) return 'belirsiz';
+  if (lanthanides.has(symbol)) return 'lantanit';
+  if (actinides.has(symbol)) return 'aktinit';
+  if (alkaliMetals.has(symbol)) return 'alkali';
+  if (alkalineEarthMetals.has(symbol)) return 'toprak-alkali';
+  if (transitionMetals.has(symbol)) return 'gecis-metali';
+  if (postTransitionMetals.has(symbol)) return 'yan-metal';
+  if (metalloids.has(symbol)) return 'yari-metal';
+  if (nobleGases.has(symbol)) return 'soy-gaz';
+  if (nonMetals.has(symbol)) return 'ametal';
+
+  return 'gecis-metali';
+}
+
+export const elements = baseElements.map((element) => ({
+  ...element,
+  family: determineFamily(element)
+}));
+
+
 // Günün elementini seç (tarih bazlı)
 export function getTodayElement() {
   const today = new Date();
@@ -174,4 +213,3 @@ function comparePeriod(guessPeriod, targetPeriod) {
 function compareType(guessType, targetType) {
   return guessType === targetType ? 'correct' : 'wrong';
 }
-
