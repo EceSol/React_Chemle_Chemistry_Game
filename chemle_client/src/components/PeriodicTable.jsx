@@ -6,7 +6,7 @@ const LEGEND_ITEMS = [
   { key: 'alkali', label: 'Alkali metaller' },
   { key: 'toprak-alkali', label: 'Toprak alkali metaller' },
   { key: 'gecis-metali', label: 'Geçiş metalleri' },
-  { key: 'yan-metal', label: 'Yan metaller' },
+  { key: 'ara-gecis-metali', label: 'Ara geçiş metalleri' },
   { key: 'yari-metal', label: 'Yarı metaller' },
   { key: 'ametal', label: 'Ametaller' },
   { key: 'soy-gaz', label: 'Soy gazlar' },

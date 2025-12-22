@@ -199,7 +199,7 @@
   border-color: rgba(114, 101, 196, 0.85);
 }
 
-.element-family-yan-metal {
+.element-family-ara-gecis-metali {
   background: linear-gradient(135deg, #244e63 0%, #3f87a5 100%);
   border-color: rgba(63, 135, 165, 0.82);
 }
@@ -299,7 +299,7 @@
 .legend-color.element-family-alkali { background: linear-gradient(135deg, #0d6f9b 0%, #1596b3 100%); }
 .legend-color.element-family-toprak-alkali { background: linear-gradient(135deg, #a14b63 0%, #c06b7b 100%); }
 .legend-color.element-family-gecis-metali { background: linear-gradient(135deg, #50458c 0%, #6a5ea7 100%); }
-.legend-color.element-family-yan-metal { background: linear-gradient(135deg, #244e63 0%, #3c7892 100%); }
+.legend-color.element-family-ara-gecis-metali { background: linear-gradient(135deg, #244e63 0%, #3c7892 100%); }
 .legend-color.element-family-yari-metal { background: linear-gradient(135deg, #3a6a64 0%, #4f9c83 100%); }
 .legend-color.element-family-ametal { background: linear-gradient(135deg, #8a7c32 0%, #bfa23f 100%); }
 .legend-color.element-family-soy-gaz { background: linear-gradient(135deg, #6f4566 0%, #925e84 100%); }

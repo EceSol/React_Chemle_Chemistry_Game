@@ -25,6 +25,36 @@ const GuessRow = forwardRef(function GuessRow({ guess, isActive }, ref) {
   }
 
   const { element, comparison } = guess;
+  const typeLabel = element.hintType || element.type;
+
+  const formatTypeLabel = (value = '') => {
+    const normalized = value
+      .replace(/Ã§/gi, 'ç')
+      .replace(/Ã¼/gi, 'ü')
+      .replace(/Ã¶/gi, 'ö')
+      .replace(/Ã±/gi, 'n')
+      .replace(/yarŽñ/gi, 'yarı');
+
+    const map = {
+      'soy-gaz': 'soygaz',
+      'yarı-metal': 'yarı metal',
+      'toprak-alkali': 'toprak alkali',
+      'gecis-metali': 'geçiş metali',
+      'gecis metal': 'geçiş metali',
+      'ara-gecis-metali': 'ara geçiş metali',
+      'ara gecis metali': 'ara geçiş metali',
+      'ametal': 'ametal',
+      'alkali': 'alkali',
+      'lantanit': 'lantanit',
+      'aktinit': 'aktinit',
+      'belirsiz': 'belirsiz',
+    };
+
+    const key = normalized.toLowerCase();
+    if (map[key]) return map[key];
+
+    return normalized.replace(/-/g, ' ').trim();
+  };
 
   const getGroupIcon = () => {
     switch (comparison.group) {
@@ -53,7 +83,7 @@ const GuessRow = forwardRef(function GuessRow({ guess, isActive }, ref) {
   };
 
   const getTypeIcon = () => {
-    return comparison.type === 'correct' ? '✓' : '✗';
+    return comparison.type === 'correct' ? '✓' : '✕';
   };
 
   const getGroupClass = () => {
@@ -86,7 +116,7 @@ const GuessRow = forwardRef(function GuessRow({ guess, isActive }, ref) {
       </div>
       <div className={getTypeClass()}>
         <div className="hint-label">Tür</div>
-        <div className="hint-value">{element.type}</div>
+        <div className="hint-value">{formatTypeLabel(typeLabel)}</div>
         <div className="hint-icon">{getTypeIcon()}</div>
       </div>
     </div>
@@ -94,4 +124,3 @@ const GuessRow = forwardRef(function GuessRow({ guess, isActive }, ref) {
 });
 
 export default React.memo(GuessRow);
-

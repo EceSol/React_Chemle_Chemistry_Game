@@ -158,7 +158,7 @@ function determineFamily(element) {
   if (alkaliMetals.has(symbol)) return 'alkali';
   if (alkalineEarthMetals.has(symbol)) return 'toprak-alkali';
   if (transitionMetals.has(symbol)) return 'gecis-metali';
-  if (postTransitionMetals.has(symbol)) return 'yan-metal';
+  if (postTransitionMetals.has(symbol)) return 'ara-gecis-metali';
   if (metalloids.has(symbol)) return 'yari-metal';
   if (nobleGases.has(symbol)) return 'soy-gaz';
   if (nonMetals.has(symbol)) return 'ametal';
@@ -168,7 +168,9 @@ function determineFamily(element) {
 
 export const elements = baseElements.map((element) => ({
   ...element,
-  family: determineFamily(element)
+  family: determineFamily(element),
+  // hintType will be used for comparisons and UI hints (more granular than legacy type)
+  hintType: determineFamily(element) || element.type
 }));
 
 
@@ -185,7 +187,7 @@ export function compareElements(guess, target) {
   return {
     group: compareGroup(guess.group, target.group),
     period: comparePeriod(guess.period, target.period),
-    type: compareType(guess.type, target.type),
+    type: compareType(guess.hintType || guess.type, target.hintType || target.type),
     isCorrect: guess.symbol === target.symbol
   };
 }
