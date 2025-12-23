@@ -149,6 +149,20 @@ const lanthanides = new Set(['La', 'Ce', 'Pr', 'Nd', 'Pm', 'Sm', 'Eu', 'Gd', 'Tb
 const actinides = new Set(['Ac', 'Th', 'Pa', 'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm', 'Md', 'No', 'Lr']);
 const unknownProps = new Set(['Mt', 'Ds', 'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts']);
 
+// Canonical display labels for element families (used across components)
+const FAMILY_LABELS = Object.freeze({
+  alkali: 'Alkali metal',
+  'toprak-alkali': 'Toprak alkali metal',
+  'gecis-metali': 'Geçiş metali',
+  'ara-gecis-metali': 'Ara geçiş metali',
+  'yari-metal': 'Yarı metal',
+  ametal: 'Ametal',
+  'soy-gaz': 'Soy gaz',
+  aktinit: 'Aktinit',
+  lantanit: 'Lantanit',
+  belirsiz: 'Özellikleri bilinmeyen'
+});
+
 function determineFamily(element) {
   const symbol = element.symbol;
 
@@ -166,12 +180,24 @@ function determineFamily(element) {
   return 'gecis-metali';
 }
 
-export const elements = baseElements.map((element) => ({
-  ...element,
-  family: determineFamily(element),
-  // hintType will be used for comparisons and UI hints (more granular than legacy type)
-  hintType: determineFamily(element) || element.type
-}));
+export const elements = baseElements.map((element) => {
+  const family = determineFamily(element);
+  const hintType = family || element.type;
+  return {
+    ...element,
+    family,
+    hintType,
+    familyLabel: FAMILY_LABELS[family] || element.type || ''
+  };
+});
+
+export const elementsBySymbol = new Map(elements.map((e) => [e.symbol, e]));
+export const elementsByAtomicNumber = new Map(elements.map((e) => [e.atomicNumber, e]));
+export const elementsByPosition = new Map(elements.map((e) => [`${e.period}-${e.group}`, e]));
+
+export function getFamilyLabel(family) {
+  return FAMILY_LABELS[family] || family || '';
+}
 
 
 // Günün elementini seç (tarih bazlı)

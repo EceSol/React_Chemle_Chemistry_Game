@@ -1,19 +1,19 @@
 import React, { useMemo, useCallback } from 'react';
-import { elements } from '../data/elements';
+import { elementsByAtomicNumber, elementsByPosition, elementsBySymbol, getFamilyLabel } from '../data/elements';
 import './PeriodicTable.css';
 
 const LEGEND_ITEMS = [
-  { key: 'alkali', label: 'Alkali metaller' },
-  { key: 'toprak-alkali', label: 'Toprak alkali metaller' },
-  { key: 'gecis-metali', label: 'Geçiş metalleri' },
-  { key: 'ara-gecis-metali', label: 'Ara geçiş metalleri' },
-  { key: 'yari-metal', label: 'Yarı metaller' },
-  { key: 'ametal', label: 'Ametaller' },
-  { key: 'soy-gaz', label: 'Soy gazlar' },
-  { key: 'aktinit', label: 'Aktinitler' },
-  { key: 'lantanit', label: 'Lantanitler' },
-  { key: 'belirsiz', label: 'Özellikleri bilinmeyenler' },
-];
+  'alkali',
+  'toprak-alkali',
+  'gecis-metali',
+  'ara-gecis-metali',
+  'yari-metal',
+  'ametal',
+  'soy-gaz',
+  'aktinit',
+  'lantanit',
+  'belirsiz'
+].map((key) => ({ key, label: getFamilyLabel(key) || key }));
 
 const slugify = (value = '') =>
   value
@@ -23,39 +23,31 @@ const slugify = (value = '') =>
     .replace(/(^-|-$)+/g, '');
 
 function PeriodicTable({ onElementSelect, disabledElements = [] }) {
-  // build lookups and table structure once (memoized) to avoid repeated .find calls
+  // Build table structure once (memoized) to avoid repeated lookups during renders
   const tableStructure = useMemo(() => {
     const table = [];
-    const posMap = new Map();
-    const atomicMap = new Map();
-
-    elements.forEach((e) => {
-      posMap.set(`${e.period}-${e.group}`, e);
-      atomicMap.set(e.atomicNumber, e);
-      atomicMap.set(e.symbol, e);
-    });
 
     for (let period = 1; period <= 7; period++) {
       const row = [];
 
       if (period === 1) {
-        row.push({ element: posMap.get('1-1') || elements.find((e) => e.symbol === 'H'), col: 1 });
+        row.push({ element: elementsByPosition.get('1-1') || elementsBySymbol.get('H'), col: 1 });
         for (let i = 2; i <= 17; i++) {
           row.push({ element: null, col: i });
         }
-        row.push({ element: posMap.get('1-18') || elements.find((e) => e.symbol === 'He'), col: 18 });
+        row.push({ element: elementsByPosition.get('1-18') || elementsBySymbol.get('He'), col: 18 });
       } else if (period === 2 || period === 3 || period === 4 || period === 5) {
         for (let group = 1; group <= 18; group++) {
-          const element = posMap.get(`${period}-${group}`) || null;
+          const element = elementsByPosition.get(`${period}-${group}`) || null;
           row.push({ element, col: group });
         }
       } else if (period === 6 || period === 7) {
         const specialSymbol = period === 6 ? 'La' : 'Ac';
         for (let group = 1; group <= 18; group++) {
           if (group === 3) {
-            row.push({ element: atomicMap.get(specialSymbol) || null, col: group });
+            row.push({ element: elementsBySymbol.get(specialSymbol) || null, col: group });
           } else {
-            const element = posMap.get(`${period}-${group}`) || null;
+            const element = elementsByPosition.get(`${period}-${group}`) || null;
             row.push({ element, col: group });
           }
         }
@@ -64,10 +56,10 @@ function PeriodicTable({ onElementSelect, disabledElements = [] }) {
       table.push({ period, cells: row });
     }
 
-    return { table, atomicMap };
+    return { table };
   }, []);
 
-  const { table: memoTable, atomicMap } = tableStructure;
+  const { table: memoTable } = tableStructure;
 
   const getElementTypeClass = useCallback((element) => {
     if (!element) return '';
@@ -97,12 +89,12 @@ function PeriodicTable({ onElementSelect, disabledElements = [] }) {
       if (!cell) return;
       const symbol = cell.dataset && cell.dataset.symbol;
       const atomic = cell.dataset && cell.dataset.atomic;
-      const element = symbol ? atomicMap.get(symbol) || atomicMap.get(Number(atomic)) : null;
+      const element = symbol ? elementsBySymbol.get(symbol) || elementsByAtomicNumber.get(Number(atomic)) : null;
       if (element && !isDisabled(element) && onElementSelect) {
         onElementSelect(element);
       }
     },
-    [atomicMap, isDisabled, onElementSelect]
+    [isDisabled, onElementSelect]
   );
 
   const renderSeriesRow = useCallback(
@@ -114,7 +106,7 @@ function PeriodicTable({ onElementSelect, disabledElements = [] }) {
             <div key={`${label}-offset-${offset}`} className="periodic-cell empty spacer" aria-hidden="true"></div>
           ))}
           {atomicRange.map((atomicNum) => {
-            const element = atomicMap.get(atomicNum) || null;
+            const element = elementsByAtomicNumber.get(atomicNum) || null;
             const disabled = isDisabled(element);
             return (
               <div
@@ -122,7 +114,7 @@ function PeriodicTable({ onElementSelect, disabledElements = [] }) {
                 className={`periodic-cell ${getElementTypeClass(element)} ${disabled ? 'disabled selected' : ''}`}
                 data-atomic={element ? element.atomicNumber : ''}
                 data-symbol={element ? element.symbol : ''}
-                title={element ? `${element.name} (${element.symbol}) - ${element.family || element.type}` : ''}
+                title={element ? `${element.name} (${element.symbol}) - ${element.familyLabel || element.family || element.type}` : ''}
               >
                 {element && (
                   <>
@@ -137,7 +129,7 @@ function PeriodicTable({ onElementSelect, disabledElements = [] }) {
         </div>
       </div>
     ),
-    [atomicMap, getElementTypeClass, isDisabled]
+    [getElementTypeClass, isDisabled]
   );
 
   return (
@@ -157,7 +149,7 @@ function PeriodicTable({ onElementSelect, disabledElements = [] }) {
                   }`}
                   data-symbol={element ? element.symbol : ''}
                   data-atomic={element ? element.atomicNumber : ''}
-                  title={element ? `${element.name} (${element.symbol}) - ${element.family || element.type}` : ''}
+                  title={element ? `${element.name} (${element.symbol}) - ${element.familyLabel || element.family || element.type}` : ''}
                 >
                   {element && (
                     <>

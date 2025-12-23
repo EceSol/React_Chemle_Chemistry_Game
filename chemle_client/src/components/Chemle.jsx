@@ -9,7 +9,6 @@ const MAX_GUESSES = 6;
 function Chemle() {
   const [targetElement, setTargetElement] = useState(null);
   const [guesses, setGuesses] = useState([]);
-  const [currentGuess, setCurrentGuess] = useState(null);
   const [gameWon, setGameWon] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const guessRowRefs = useRef([]);
@@ -35,8 +34,6 @@ function Chemle() {
         setGameOver(true);
       }
 
-      setCurrentGuess(null);
-
       // Smooth scroll to the specific guess row
       setTimeout(() => {
         const guessIndex = newGuesses.length - 1;
@@ -56,7 +53,6 @@ function Chemle() {
     const todayElement = getTodayElement();
     setTargetElement(todayElement);
     setGuesses([]);
-    setCurrentGuess(null);
     setGameWon(false);
     setGameOver(false);
   };
@@ -121,4 +117,3 @@ function Chemle() {
 }
 
 export default Chemle;
-
