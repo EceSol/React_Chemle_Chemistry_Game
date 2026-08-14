@@ -58,6 +58,13 @@
   z-index: 1;
   overflow-x: auto;
   padding-bottom: 6px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.periodic-table::-webkit-scrollbar,
+.series-row::-webkit-scrollbar {
+  display: none;
 }
 
 .periodic-row {
@@ -254,6 +261,8 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 4px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .series-grid {
