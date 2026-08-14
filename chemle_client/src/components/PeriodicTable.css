@@ -250,7 +250,10 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
 }
 
 .series-grid {
@@ -259,6 +262,7 @@
   gap: var(--cell-gap);
   width: max-content;
   justify-content: start;
+  flex-shrink: 0;
 }
 
 .row-label {
@@ -266,6 +270,7 @@
   font-size: 0.95rem;
   min-width: 110px;
   color: #dfe6f2;
+  flex-shrink: 0;
 }
 
 .legend {
